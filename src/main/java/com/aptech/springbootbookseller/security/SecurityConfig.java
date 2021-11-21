@@ -2,7 +2,9 @@ package com.aptech.springbootbookseller.security;
 
 
 import com.aptech.springbootbookseller.model.Role;
+import com.aptech.springbootbookseller.security.jwt.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -21,13 +23,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig extends WebSecurityConfigurerAdapter
+{
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception
+    {
         auth.userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder());
     }
@@ -50,6 +54,15 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/authentication/**").permitAll()
                 .anyRequest().authenticated();
 
+        //jwt filter
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+
+    }
+
+    @Bean
+    public JwtAuthorizationFilter jwtAuthorizationFilter()
+    {
+        return new JwtAuthorizationFilter();
     }
 
     @Bean
@@ -72,5 +85,4 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             }
         };
     }
-
 }
