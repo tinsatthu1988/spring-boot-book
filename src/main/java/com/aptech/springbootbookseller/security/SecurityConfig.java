@@ -26,6 +26,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
 
+    @Value("${authentication.internal-api-key}")
+    private String internalApiKey;
+
     @Autowired
     private CustomUserDetailsService userDetailsService;
 
@@ -52,11 +55,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 
         http.authorizeRequests()
                 .antMatchers("/api/authentication/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/book").permitAll()
+                .antMatchers("/api/book/**").hasRole(Role.ADMIN.name())
+                .antMatchers("/api/internal/**").hasRole(Role.SYSTEM_MANAGER.name())
                 .anyRequest().authenticated();
 
         //jwt filter
-        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
+        //internal > jwt > authentication
+        http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(internalApiAuthenticationFilter(), JwtAuthorizationFilter.class);
 
+    }
+
+    @Bean
+    public InternalApiAuthenticationFilter internalApiAuthenticationFilter()
+    {
+        return new InternalApiAuthenticationFilter(internalApiKey);
     }
 
     @Bean
