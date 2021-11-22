@@ -5,8 +5,12 @@ import com.aptech.springbootbookseller.model.Role;
 import com.aptech.springbootbookseller.security.jwt.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.BeanIds;
@@ -23,14 +27,18 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
+//@EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, WebMvcAutoConfiguration.class })
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
 
     @Value("${authentication.internal-api-key}")
-    private String internalApiKey;
+    private String INTERNAL_API_KEY;
 
-    @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private final CustomUserDetailsService userDetailsService;
+
+    public SecurityConfig(@Lazy CustomUserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception
@@ -70,7 +78,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
     @Bean
     public InternalApiAuthenticationFilter internalApiAuthenticationFilter()
     {
-        return new InternalApiAuthenticationFilter(internalApiKey);
+        return new InternalApiAuthenticationFilter(INTERNAL_API_KEY);
     }
 
     @Bean
@@ -85,18 +93,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebMvcConfigurer corsConfigurer()
-    {
-        return new WebMvcConfigurer()
-        {
-            @Override
-            public void addCorsMappings(CorsRegistry registry)
-            {
-                registry.addMapping("/**")
-                        .allowedOrigins("*")
-                        .allowedMethods("*");
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer corsConfigurer()
+//    {
+//        return new WebMvcConfigurer()
+//        {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry)
+//            {
+//                registry.addMapping("/**")
+//                        .allowedOrigins("*")
+//                        .allowedMethods("*");
+//            }
+//        };
+//    }
 }

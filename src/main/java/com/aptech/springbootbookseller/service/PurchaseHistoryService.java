@@ -3,6 +3,7 @@ package com.aptech.springbootbookseller.service;
 import com.aptech.springbootbookseller.model.PurchaseHistory;
 import com.aptech.springbootbookseller.repository.IPurchaseHistoryRepository;
 import com.aptech.springbootbookseller.repository.projection.IPurchaseItem;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ public class PurchaseHistoryService implements IPurchaseHistoryService
 {
     private final IPurchaseHistoryRepository purchaseHistoryRepository;
 
-    public PurchaseHistoryService(IPurchaseHistoryRepository purchaseHistoryRepository)
+    public PurchaseHistoryService(@Lazy IPurchaseHistoryRepository purchaseHistoryRepository)
     {
         this.purchaseHistoryRepository = purchaseHistoryRepository;
     }

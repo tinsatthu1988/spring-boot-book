@@ -10,6 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
@@ -17,6 +18,7 @@ import java.util.Date;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Component
 public class JwtProvider implements IJwtProvider{
     @Value("${app.jwt.secret}")
     private String JWT_SECRET;

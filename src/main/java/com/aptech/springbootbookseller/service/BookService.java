@@ -2,6 +2,7 @@ package com.aptech.springbootbookseller.service;
 
 import com.aptech.springbootbookseller.model.Book;
 import com.aptech.springbootbookseller.repository.IBookRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class BookService implements IBookService
 {
     private final IBookRepository bookRepository;
 
-    public BookService(IBookRepository bookRepository)
+    public BookService(@Lazy IBookRepository bookRepository)
     {
         this.bookRepository = bookRepository;
     }
